@@ -32,6 +32,16 @@ function createGameboard(xLength, yLength) {
 
   const receiveAttack = function receiveAttack(coordinates) {
     verifyCoordinatesAreValid(coordinates);
+    hitCoordinatesList.forEach((hitCoordinates) => {
+      if (coordinates.x === hitCoordinates.x && coordinates.y === hitCoordinates.y) {
+        throw new Error('Coordinates previously attacked');
+      }
+    });
+    missedCoordinatesList.forEach((missedCoordinates) => {
+      if (coordinates.x === missedCoordinates.x && coordinates.y === missedCoordinates.y) {
+        throw new Error('Coordinates previously attacked');
+      }
+    });
     let hit = false;
     for (let i = 0; i < shipsDetails.length; i += 1) {
       const shipCoordinatesList = shipsDetails[i].coordinatesList;

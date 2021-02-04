@@ -56,3 +56,16 @@ test('When passing coordinates that do not exist on the board, receiveAttack thr
   const board = createGameBoard(3, 3);
   expect(() => board.receiveAttack({ x: 3, y: 3 })).toThrow(Error);
 });
+
+test('When calling with coordinates already missed, receiveAttack throws an error', () => {
+  const board = createGameBoard(3, 3);
+  board.receiveAttack({ x: 2, y: 2 });
+  expect(() => board.receiveAttack({ x: 2, y: 2 })).toThrow(Error);
+});
+
+test('When calling with coordinates already hit, receiveAttack throws an error', () => {
+  const board = createGameBoard(3, 3);
+  board.placeShip([{ x: 2, y: 2 }]);
+  board.receiveAttack({ x: 2, y: 2 });
+  expect(() => board.receiveAttack({ x: 2, y: 2 })).toThrow(Error);
+});
