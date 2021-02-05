@@ -9,6 +9,14 @@ function createGameboard(xLength, yLength) {
   const hitCoordinatesList = [];
   const missedCoordinatesList = [];
 
+  const getXLength = function getXLength() {
+    return xLength;
+  };
+
+  const getYLength = function getYLength() {
+    return yLength;
+  };
+
   const verifyCoordinatesAreValid = function verifyCoordinatesAreValid(coordinates) {
     if (!(coordinates.x < xLength && coordinates.y < yLength)) {
       throw new RangeError('Coordinates are invalid');
@@ -92,6 +100,8 @@ function createGameboard(xLength, yLength) {
   };
 
   return {
+    getXLength,
+    getYLength,
     receiveAttack,
     placeShip,
     getHitCoordinates,
