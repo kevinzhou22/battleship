@@ -89,6 +89,18 @@ function createGameboard(xLength, yLength) {
     return missedCoordinatesCopy;
   };
 
+  const getPlacedShips = function getPlacedShips() {
+    const shipCoordinates = [];
+    shipsDetails.forEach(({ coordinatesList }) => {
+      const coordinatesListCopy = [];
+      coordinatesList.forEach((coordinates) => {
+        coordinatesListCopy.push({ ...coordinates });
+      });
+      shipCoordinates.push(coordinatesListCopy);
+    });
+    return shipCoordinates;
+  };
+
   const areAllShipsSunk = function areAllShipsSunk() {
     let allSunk = true;
     shipsDetails.forEach((shipDetails) => {
@@ -106,6 +118,7 @@ function createGameboard(xLength, yLength) {
     placeShip,
     getHitCoordinates,
     getMissedCoordinates,
+    getPlacedShips,
     areAllShipsSunk,
   };
 }

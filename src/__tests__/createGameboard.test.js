@@ -69,3 +69,9 @@ test('When calling with coordinates already hit, receiveAttack throws an error',
   board.receiveAttack({ x: 2, y: 2 });
   expect(() => board.receiveAttack({ x: 2, y: 2 })).toThrow(Error);
 });
+
+test('After placing a ship, getPlacedShips returns the coordinates of the ship', () => {
+  const board = createGameBoard(3, 3);
+  board.placeShip([{ x: 2, y: 2 }]);
+  expect(board.getPlacedShips()).toEqual([[{ x: 2, y: 2 }]]);
+});
