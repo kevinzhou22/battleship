@@ -75,3 +75,17 @@ test('After placing a ship, getPlacedShips returns the coordinates of the ship',
   board.placeShip([{ x: 2, y: 2 }]);
   expect(board.getPlacedShips()).toEqual([[{ x: 2, y: 2 }]]);
 });
+
+test(`Calling placeShip and then calling areCoordinatesValidForShip with coordinates passed to placeShip
+  returns false`, () => {
+  const board = createGameBoard(3, 3);
+  board.placeShip([{ x: 0, y: 0 }]);
+  expect(board.areCoordinatesValidForShip([{ x: 0, y: 0 }, { x: 1, y: 0 }])).toBe(false);
+});
+
+test(`Calling placeShip and then calling areCoordinatesValidForShip with coordinates not passed to placeShip
+  returns true`, () => {
+  const board = createGameBoard(3, 3);
+  board.placeShip([{ x: 0, y: 1 }]);
+  expect(board.areCoordinatesValidForShip([{ x: 0, y: 0 }, { x: 1, y: 0 }])).toBe(true);
+});

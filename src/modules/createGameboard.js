@@ -45,6 +45,7 @@ function createGameboard(xLength, yLength) {
         throw new Error('Coordinates previously attacked');
       }
     });
+
     missedCoordinatesList.forEach((missedCoordinates) => {
       if (coordinates.x === missedCoordinates.x && coordinates.y === missedCoordinates.y) {
         throw new Error('Coordinates previously attacked');
@@ -111,6 +112,20 @@ function createGameboard(xLength, yLength) {
     return allSunk;
   };
 
+  const areCoordinatesValidForShip = function areCoordinatesValidForShip(shipCoordinates) {
+    let valid = true;
+    shipCoordinates.forEach((coordinates) => {
+      shipsDetails.forEach(({ coordinatesList }) => {
+        coordinatesList.forEach(({ x, y }) => {
+          if (x === coordinates.x && y === coordinates.y) {
+            valid = false;
+          }
+        });
+      });
+    });
+    return valid;
+  };
+
   return {
     getXLength,
     getYLength,
@@ -120,6 +135,7 @@ function createGameboard(xLength, yLength) {
     getMissedCoordinates,
     getPlacedShips,
     areAllShipsSunk,
+    areCoordinatesValidForShip,
   };
 }
 
