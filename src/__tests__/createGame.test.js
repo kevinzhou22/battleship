@@ -188,3 +188,9 @@ test(`When passed argument random, a function that returns 0 ten times and 1 aft
   const coordinates = game.generateRandomShipCoordinates(random, 'user', 5);
   expect(coordinates).not.toContainEqual({ x: 0, y: 0 });
 });
+
+test(`generateAndPlaceComputerShips creates five ships on the computer's board`, () => {
+  game.generateAndPlaceComputerShips(Math.random);
+  const { placedShips } = game.getBoardState('computer');
+  expect(placedShips.length).toBe(5);
+});

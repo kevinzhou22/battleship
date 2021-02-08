@@ -189,6 +189,14 @@ const createGame = function createGame(events) {
     return generateRandomShipCoordinates(randomFn, playerName, length);
   };
 
+  const generateAndPlaceComputerShips = function generateAndPlaceComputerShips(randomFn) {
+    computerBoard.placeShip(generateRandomShipCoordinates(randomFn, 'computer', 2));
+    computerBoard.placeShip(generateRandomShipCoordinates(randomFn, 'computer', 3));
+    computerBoard.placeShip(generateRandomShipCoordinates(randomFn, 'computer', 3));
+    computerBoard.placeShip(generateRandomShipCoordinates(randomFn, 'computer', 4));
+    computerBoard.placeShip(generateRandomShipCoordinates(randomFn, 'computer', 5));
+  };
+
   return {
     placeShip,
     getBoardState,
@@ -198,6 +206,7 @@ const createGame = function createGame(events) {
     resetGame,
     generateShipCoordinates,
     generateRandomShipCoordinates,
+    generateAndPlaceComputerShips,
   };
 };
 
