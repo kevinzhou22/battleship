@@ -149,11 +149,11 @@ test(`Calling generateShipCoordinates('up', {x: 0, y: 0}, 3) generates
 });
 
 // relies on implementation
-test(`When passed argument random, a function that always returns 1, generateRandomShipCoordinates(random, 5)
+test(`When passed argument random, a function that returns a value close to 1, generateRandomShipCoordinates(random,, 'user', 5)
   should return an array with coordinates representing a vertical ship of length 5 at the far edge of the board`, () => {
   const random = jest.fn();
-  random.mockImplementation(1);
-  const coordinates = game.generateRandomShipCoordinates(random, 5);
+  random.mockReturnValue(0.99999);
+  const coordinates = game.generateRandomShipCoordinates(random, 'user', 5);
   expect(coordinates).toContainEqual({ x: 7, y: 7 });
   expect(coordinates).toContainEqual({ x: 7, y: 6 });
   expect(coordinates).toContainEqual({ x: 7, y: 5 });
@@ -163,15 +163,28 @@ test(`When passed argument random, a function that always returns 1, generateRan
 });
 
 // relies on implementation
-test(`When passed argument random, a function that always returns 0, generateRandomShipCoordinates(random, 5)
+test(`When passed argument random, a function that always returns 0, generateRandomShipCoordinates(random, 'user', 5)
   should return an array with coordinates representing a horizontal ship of length 5 starting from the origin`, () => {
-    const random = jest.fn();
-    random.mockImplementation(1);
-    const coordinates = game.generateRandomShipCoordinates(random, 5);
-    expect(coordinates).toContainEqual({ x: 0, y: 0 });
-    expect(coordinates).toContainEqual({ x: 1, y: 0 });
-    expect(coordinates).toContainEqual({ x: 2, y: 0 });
-    expect(coordinates).toContainEqual({ x: 3, y: 0 });
-    expect(coordinates).toContainEqual({ x: 4, y: 0 });
-    expect(coordinates.length).toBe(5);
+  const random = jest.fn();
+  random.mockReturnValue(0);
+  const coordinates = game.generateRandomShipCoordinates(random, 'user', 5);
+  expect(coordinates).toContainEqual({ x: 0, y: 0 });
+  expect(coordinates).toContainEqual({ x: 1, y: 0 });
+  expect(coordinates).toContainEqual({ x: 2, y: 0 });
+  expect(coordinates).toContainEqual({ x: 3, y: 0 });
+  expect(coordinates).toContainEqual({ x: 4, y: 0 });
+  expect(coordinates.length).toBe(5);
+});
+
+test(`When passed argument random, a function that returns 0 ten times and 1 after that and after having placed a ship at
+  the origin for the origin, generateRandomShipCoordinates(random, 'user', 5) should return an array
+  without the origin`, () => {
+  const random = jest.fn();
+  for (let i = 0; i < 10; i += 1) {
+    random.mockReturnValueOnce(0);
+  }
+  random.mockReturnValue(1);
+  game.placeShip('user', [{ x: 0, y: 0 }]);
+  const coordinates = game.generateRandomShipCoordinates(random, 'user', 5);
+  expect(coordinates).not.toContainEqual({ x: 0, y: 0 });
 });
