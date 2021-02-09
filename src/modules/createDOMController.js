@@ -1,18 +1,46 @@
-function createDOMController() {
+function createDOMController(game) {
   const playerGrid = document.querySelector('.player-section-wrapper .grid');
   const computerGrid = document.querySelector('.computer-section-wrapper .grid');
 
   // state
   let placedShips = [];
-  let selectionLength = 5;
+  let selectionLength = null;
   let selectionOrientation = 'up';
+  let isThereAnotherShip = true;
+  const shipsToPlace = (function createShipsToPlace() {
+    const items = [5, 4, 3, 3, 2];
+    let currentIndex = 0;
+    const nextShipLength = function nextShipLength() {
+      if (currentIndex >= items.length) {
+        selectionLength = null;
+        isThereAnotherShip = false;
+      } else {
+        selectionLength = items[currentIndex];
+        currentIndex += 1;
+      }
+    };
+    const reset = function reset() {
+      isThereAnotherShip = true;
+      currentIndex = 0;
+      nextShipLength();
+    };
+    return {
+      nextShipLength,
+      reset,
+    };
+  }());
 
+  const setInformation = function setInformation(message) {
+    document.querySelector('.information').textContent = message;
+  };
   const getCell = function getCell(grid, coordinates) {
     const { x, y } = coordinates;
-    const cell = grid.querySelector(`.cell[data-cell-x="${x}"][data-cell-y="${y}"]`)
+    const cell = grid.querySelector(`.cell[data-cell-x="${x}"][data-cell-y="${y}"]`);
     if (cell === null) throw new Error('Cell not found');
     return cell;
   };
+
+  /* SELECTION MODE FUNCTIONS */
 
   const isCellAlreadyPlaced = function isCellAlreadyPlaced(coordinates, alreadyPlaced) {
     let placed = false;
@@ -100,10 +128,11 @@ function createDOMController() {
     return coordinates;
   };
 
-  /* Event Handlers */
-
   // adds ship to state
   const onClickOfCellDuringSelection = function onClickOfCellDuringSelection(event) {
+    if (!isThereAnotherShip) {
+      return;
+    }
     const cell = event.target;
     const mouseLocation = getCellCoordinates(cell);
     const coordinatesList = getSelection(mouseLocation, selectionOrientation, selectionLength);
@@ -121,6 +150,8 @@ function createDOMController() {
     });
     if (isValidSelection) {
       placedShips.push(coordinatesList);
+      renderPlacedShips(placedShips);
+      shipsToPlace.nextShipLength();
     }
   };
 
@@ -134,6 +165,9 @@ function createDOMController() {
   };
 
   const onMouseEnterCellDuringSelection = function onMouseEnterCellDuringSelection(event) {
+    if (!isThereAnotherShip) {
+      return;
+    }
     const cell = event.target;
     const coordinates = getCellCoordinates(cell);
     renderPlacedShips(placedShips);
@@ -158,6 +192,28 @@ function createDOMController() {
     playerGrid.querySelectorAll('.cell').forEach((cell) => {
       cell.classList.remove('already-placed');
     });
+    shipsToPlace.reset();
+  };
+
+  const removePlayerSelectionEventListeners = function removePlayerSelectionEventListeners() {
+    const cells = playerGrid.querySelectorAll('.cell');
+    cells.forEach((cell) => {
+      cell.removeEventListener('mouseenter', onMouseEnterCellDuringSelection);
+      cell.removeEventListener('mouseleave', onMouseLeaveCellDuringSelection);
+      cell.removeEventListener('click', onClickOfCellDuringSelection);
+    });
+  };
+
+  const onClickOfStartDuringSelection = function onClickOfStartDuringSelection() {
+    if (isThereAnotherShip) {
+      setInformation('All ships must be placed before the game can begin!');
+      return;
+    }
+    removePlayerSelectionEventListeners();
+    document.querySelector('.options').style.visibility = 'hidden';
+    placedShips.forEach((placedShip) => {
+      game.placeShip('user', placedShip);
+    });
   };
 
   const setUpPlayerSelectionEventListeners = function setUpPlayerSelectionEventListeners() {
@@ -167,11 +223,10 @@ function createDOMController() {
       cell.addEventListener('mouseleave', onMouseLeaveCellDuringSelection);
       cell.addEventListener('click', onClickOfCellDuringSelection);
     });
-    document.querySelector('.change-orientation').addEventListener('click', onClickOfChangeOrientation);
-    document.querySelector('.reset').addEventListener('click', onClickOfResetDuringSelection);
   };
 
   const initialize = function initialize() {
+    setInformation('Place your ships!');
     for (let i = 7; i >= 0; i -= 1) {
       for (let j = 0; j < 8; j += 1) {
         const playerCell = document.createElement('div');
@@ -186,6 +241,10 @@ function createDOMController() {
         computerGrid.appendChild(computerCell);
       }
     }
+    document.querySelector('.change-orientation').addEventListener('click', onClickOfChangeOrientation);
+    document.querySelector('.reset').addEventListener('click', onClickOfResetDuringSelection);
+    document.querySelector('.start').addEventListener('click', onClickOfStartDuringSelection);
+    shipsToPlace.nextShipLength();
     setUpPlayerSelectionEventListeners();
   };
 
