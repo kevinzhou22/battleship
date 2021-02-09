@@ -1,8 +1,11 @@
+import events from './events';
+
 function createDOMController(game) {
   const playerGrid = document.querySelector('.player-section-wrapper .grid');
   const computerGrid = document.querySelector('.computer-section-wrapper .grid');
 
-  // state
+  /* STATE */
+
   let placedShips = [];
   let selectionLength = null;
   let selectionOrientation = 'up';
@@ -39,6 +42,8 @@ function createDOMController(game) {
     if (cell === null) throw new Error('Cell not found');
     return cell;
   };
+
+  let canUserMove = null;
 
   /* SELECTION MODE FUNCTIONS */
 
@@ -214,6 +219,7 @@ function createDOMController(game) {
     placedShips.forEach((placedShip) => {
       game.placeShip('user', placedShip);
     });
+    startGame(); // eslint-disable-line
   };
 
   const setUpPlayerSelectionEventListeners = function setUpPlayerSelectionEventListeners() {
@@ -224,6 +230,107 @@ function createDOMController(game) {
       cell.addEventListener('click', onClickOfCellDuringSelection);
     });
   };
+
+  /* GAME MODE FUNCTIONS */
+  const updateBoardForFiredUponCells = function updateBoardForFiredUponCells(playerName) {
+    let hitCoordinates;
+    let missedCoordinates;
+    let grid;
+    if (playerName === 'user') {
+      ({ hitCoordinates, missedCoordinates } = game.getBoardState('user'));
+      grid = playerGrid;
+    } else if (playerName === 'computer') {
+      ({ hitCoordinates, missedCoordinates } = game.getBoardState('computer'));
+      grid = computerGrid;
+    } else {
+      throw new Error('Invalid playerName');
+    }
+    hitCoordinates.forEach((coordinates) => {
+      getCell(grid, coordinates).classList.add('hit');
+    });
+    missedCoordinates.forEach((coordinates) => {
+      getCell(grid, coordinates).classList.add('missed');
+    });
+  };
+
+  const hasCellBeenFiredUpon = function hasCellBeenFiredUpon(coordinates) {
+    const { hitCoordinates, missedCoordinates } = game.getBoardState('computer');
+    let firedUpon = false;
+    hitCoordinates.forEach(({ x, y }) => {
+      if (x === coordinates.x && y === coordinates.y) {
+        firedUpon = true;
+      }
+    });
+    missedCoordinates.forEach(({ x, y }) => {
+      if (x === coordinates.x && y === coordinates.y) {
+        firedUpon = true;
+      }
+    });
+    return firedUpon;
+  };
+
+  const onClickOfCellDuringGame = function onClickOnCellDuringGame(event) {
+    if (!canUserMove) {
+      return;
+    }
+    const cell = event.target;
+    const coordinates = getCellCoordinates(cell);
+    if (hasCellBeenFiredUpon(coordinates)) {
+      return;
+    }
+    game.makeUserMove(coordinates);
+    canUserMove = false;
+  };
+
+  const onUserTurnBegins = function onUserTurnBegins() {
+    updateBoardForFiredUponCells('user');
+    canUserMove = true;
+  };
+
+  const onComputerTurnBegins = function onComputerTurnBegins() {
+    updateBoardForFiredUponCells('computer');
+    game.makeComputerMove(Math.random);
+  };
+
+  const removeAllTargetingClasses = function removeAllTargetingClasses() {
+    computerGrid.querySelectorAll('.cell').forEach((cell) => {
+      cell.classList.remove('targeting');
+      cell.classList.remove('invalid-targeting');
+    });
+  };
+
+  const onMouseEnterComputerCellDuringGame = function onMouseEnterComputerCellDuringGame(event) {
+    const cell = event.target;
+    if (hasCellBeenFiredUpon(getCellCoordinates(cell))) {
+      cell.classList.add('invalid-targeting');
+    } else {
+      cell.classList.add('targeting');
+    }
+  };
+
+  const onMouseLeaveComputerCellDuringGame = function onMouseLeaveComputerCellDuringGame() {
+    removeAllTargetingClasses();
+  };
+
+  const setUpGameModeEventListeners = function setUpGameModeEventListeners() {
+    const cells = computerGrid.querySelectorAll('.cell');
+    cells.forEach((cell) => {
+      cell.addEventListener('mouseenter', onMouseEnterComputerCellDuringGame);
+      cell.addEventListener('mouseleave', onMouseLeaveComputerCellDuringGame);
+      cell.addEventListener('click', onClickOfCellDuringGame);
+    });
+
+    events.on('USER_TURN_BEGINS', onUserTurnBegins);
+    events.on('COMPUTER_TURN_BEGINS', onComputerTurnBegins);
+  };
+
+  const startGame = function startGame() {
+    game.generateAndPlaceComputerShips(Math.random);
+    setUpGameModeEventListeners();
+    game.start();
+  };
+
+  /* INITIALIZE */
 
   const initialize = function initialize() {
     setInformation('Place your ships!');

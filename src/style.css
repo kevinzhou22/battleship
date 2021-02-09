@@ -99,3 +99,39 @@ header {
   background-color: rgba(180, 180,180, 0.7)
 }
 
+/* Game Mode */
+
+.cell {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell.hit::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  height: 1.6rem;
+  width: 1.6rem;
+  border-radius: 50%;
+  background-color: red;
+}
+
+.cell.missed::after {
+  content: '';
+  display: inline-block;
+  position: absolute;
+  height: 1.6rem;
+  width: 1.6rem;
+  border-radius: 50%;
+  background-color: white;
+}
+
+.cell.targeting {
+  background-color: #00693e;
+}
+
+.cell.invalid-targeting {
+  background-color: rgba(250, 0, 0, 0.5);  
+}
