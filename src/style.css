@@ -85,3 +85,17 @@ header {
   font-weight: bold;
   margin-right: 0.3rem;
 }
+
+/* Ship Placement Mode */
+.cell.already-placed {
+  background-color:rgb(180, 180,180)
+}
+
+.cell.invalid-placement {
+  background-color: rgba(250, 0, 0, 0.5);  
+}
+
+.cell.player-selection {
+  background-color: rgba(180, 180,180, 0.7)
+}
+
