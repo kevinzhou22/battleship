@@ -52,18 +52,18 @@ const createGame = function createGame(events) {
   /* returns a promise that is resolved with the coordinates of the
   user's move */
   const awaitUserMove = function awaitUserMove() {
-    events.emit(eventsEmitted.USER_TURN_BEGINS, null);
     currentPlayer = userPlayer;
     return new Promise((resolve) => {
       awaitCallback = resolve;
+      events.emit(eventsEmitted.USER_TURN_BEGINS, null);
     });
   };
 
   const awaitComputerMove = function awaitComputerMove() {
-    events.emit(eventsEmitted.COMPUTER_TURN_BEGINS, null);
     currentPlayer = computerPlayer;
     return new Promise((resolve) => {
       awaitCallback = resolve;
+      events.emit(eventsEmitted.COMPUTER_TURN_BEGINS, null);
     });
   };
 
