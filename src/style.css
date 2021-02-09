@@ -1,0 +1,87 @@
+html {
+  font-size: 10px;
+}
+
+:root {
+  --off-white: #efefef;
+  --background-blue: #000240;
+}
+
+.root {
+  font-family: 'Orbitron', sans-serif;
+  background-color: var(--background-blue);
+  color: var(--off-white);
+  min-height: 100vh;
+  box-sizing: bor;
+  padding: 3rem 3rem;
+}
+
+header {
+  font-size: 3.5rem;
+  font-weight: bold;
+}
+
+.information {
+  background-color: rgb(200, 200,200);
+  color: black;
+  padding: 2.5rem 3.5rem;
+  margin-top: 5rem;
+  border-radius: 1.5rem;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.main-game-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 4rem 2rem;
+}
+
+.main-game-wrapper h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.player-section-wrapper {
+  margin-left: 20rem;
+  margin-right: 20rem;
+  margin-bottom: 5rem;
+}
+
+.computer-section-wrapper {
+  margin-left: 20rem;
+  margin-right: 20rem;
+}
+
+.grid {
+  display: inline-grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.2rem;
+}
+
+.grid .cell {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 8%;
+  box-sizing: border-box;
+  border: 1px solid white;
+}
+
+.player-section-wrapper .options {
+  margin-top: 2rem;
+}
+
+.player-section-wrapper .options button {
+  margin-top: 1rem;
+  font-family: 'Orbitron', sans-serif;
+  background-color: var(--off-white);
+  color: black;
+  border: none;
+  font-size: 1.5rem;
+  padding: 1.5rem 2rem;
+  font-weight: bold;
+  margin-right: 0.3rem;
+}
