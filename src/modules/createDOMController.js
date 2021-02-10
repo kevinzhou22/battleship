@@ -279,17 +279,17 @@ function createDOMController(game) {
       return;
     }
     game.makeUserMove(coordinates);
+    updateBoardForFiredUponCells('computer');
     canUserMove = false;
   };
 
   const onUserTurnBegins = function onUserTurnBegins() {
-    updateBoardForFiredUponCells('user');
     canUserMove = true;
   };
 
   const onComputerTurnBegins = function onComputerTurnBegins() {
-    updateBoardForFiredUponCells('computer');
     game.makeComputerMove(Math.random);
+    updateBoardForFiredUponCells('user');
   };
 
   const removeAllTargetingClasses = function removeAllTargetingClasses() {
@@ -322,6 +322,35 @@ function createDOMController(game) {
 
     events.on('USER_TURN_BEGINS', onUserTurnBegins);
     events.on('COMPUTER_TURN_BEGINS', onComputerTurnBegins);
+    events.on('PLAYER_HAS_WON', onPlayerHasWon);  // eslint-disable-line
+  };
+
+  const removeGameModeEventListeners = function removeGameModeEventListeners() {
+    const cells = computerGrid.querySelectorAll('.cell');
+    cells.forEach((cell) => {
+      cell.removeEventListener('mouseenter', onMouseEnterComputerCellDuringGame);
+      cell.removeEventListener('mouseleave', onMouseLeaveComputerCellDuringGame);
+      cell.removeEventListener('click', onClickOfCellDuringGame); // eslint-disable-line
+    });
+
+    events.off('USER_TURN_BEGINS', onUserTurnBegins);
+    events.off('COMPUTER_TURN_BEGINS', onComputerTurnBegins);
+    events.off('PLAYER_HAS_WON', onPlayerHasWon); // eslint-disable-line
+  };
+
+  const onPlayerHasWon = function onPlayerHasWon(eventData) {
+    const { winner } = eventData;
+    let victorToDisplay;
+    if (winner === 'user') {
+      victorToDisplay = 'User';
+    } else if (winner === 'computer') {
+      victorToDisplay = 'Computer';
+    } else {
+      throw new Error('Unrecognized victor in event data');
+    }
+    setInformation(`${victorToDisplay} has won the game!`);
+    removeGameModeEventListeners();
+    removeAllTargetingClasses();
   };
 
   const startGame = function startGame() {
