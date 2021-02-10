@@ -45,6 +45,12 @@ function createDOMController(game) {
 
   let canUserMove = null;
 
+  const removeAllPlacementClasses = function removeAllPlacementClasses() {
+    playerGrid.querySelectorAll('.cell').forEach((cell) => {
+      cell.classList.remove('already-placed');
+    });
+  };
+
   /* SELECTION MODE FUNCTIONS */
 
   const isCellAlreadyPlaced = function isCellAlreadyPlaced(coordinates, alreadyPlaced) {
@@ -194,9 +200,7 @@ function createDOMController(game) {
 
   const onClickOfResetDuringSelection = function onClickOfResetDuringSelection() {
     placedShips = [];
-    playerGrid.querySelectorAll('.cell').forEach((cell) => {
-      cell.classList.remove('already-placed');
-    });
+    removeAllPlacementClasses();
     shipsToPlace.reset();
   };
 
@@ -232,6 +236,19 @@ function createDOMController(game) {
   };
 
   /* GAME MODE FUNCTIONS */
+
+  // removes hit and miss classes from both grids
+  const removeAllHitAndMissClasses = function removeAllHitAndMissClasses() {
+    playerGrid.querySelectorAll('.cell').forEach((cell) => {
+      cell.classList.remove('hit');
+      cell.classList.remove('missed');
+    });
+    computerGrid.querySelectorAll('.cell').forEach((cell) => {
+      cell.classList.remove('hit');
+      cell.classList.remove('missed');
+    });
+  };
+
   const updateBoardForFiredUponCells = function updateBoardForFiredUponCells(playerName) {
     let hitCoordinates;
     let missedCoordinates;
@@ -338,6 +355,19 @@ function createDOMController(game) {
     events.off('PLAYER_HAS_WON', onPlayerHasWon); // eslint-disable-line
   };
 
+  const onClickOfNewGame = function onClickOfNewGame() {
+    const newGameButton = document.querySelector('header .new-game');
+    newGameButton.removeEventListener('click', onClickOfNewGame);
+    newGameButton.style.visibility = 'hidden';
+    game.resetGame();
+    placedShips = [];
+    removeAllPlacementClasses();
+    removeAllHitAndMissClasses();
+    document.querySelector('.options').style.visibility = 'visible';
+    shipsToPlace.reset();
+    setUpPlayerSelectionEventListeners();
+  };
+
   const onPlayerHasWon = function onPlayerHasWon(eventData) {
     const { winner } = eventData;
     let victorToDisplay;
@@ -351,6 +381,9 @@ function createDOMController(game) {
     setInformation(`${victorToDisplay} has won the game!`);
     removeGameModeEventListeners();
     removeAllTargetingClasses();
+    const newGameButton = document.querySelector('header .new-game');
+    newGameButton.style.visibility = 'visible';
+    newGameButton.addEventListener('click', onClickOfNewGame);
   };
 
   const startGame = function startGame() {
@@ -380,6 +413,7 @@ function createDOMController(game) {
     document.querySelector('.change-orientation').addEventListener('click', onClickOfChangeOrientation);
     document.querySelector('.reset').addEventListener('click', onClickOfResetDuringSelection);
     document.querySelector('.start').addEventListener('click', onClickOfStartDuringSelection);
+    document.querySelector('header .new-game').style.visibility = 'hidden';
     shipsToPlace.nextShipLength();
     setUpPlayerSelectionEventListeners();
   };
