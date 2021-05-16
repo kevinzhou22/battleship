@@ -185,7 +185,7 @@ function createDOMController(game) {
     renderCurrentSelection(coordinates, selectionOrientation, selectionLength, placedShips);
   };
 
-  const onMouseLeaveCellDuringSelection = function onMouseLeaveCellDuringSelection(event) {
+  const onMouseLeaveCellDuringSelection = function onMouseLeaveCellDuringSelection() {
     removeAllSelectionClasses();
   };
 
