@@ -218,6 +218,7 @@ function createDOMController(game) {
       setInformation('All ships must be placed before the game can begin!');
       return;
     }
+    setInformation('Let the game begin!');
     removePlayerSelectionEventListeners();
     document.querySelector('.options').style.visibility = 'hidden';
     placedShips.forEach((placedShip) => {
